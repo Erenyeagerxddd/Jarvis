@@ -96,36 +96,38 @@ System({
 });
 
 System({
-    pattern: "(allvar|allenv)",
+    pattern: "(allvar|allenv) ?(.*)",
     fromMe: true,
     type: "server",
     desc: "all environment variables",
-}, async (message) => {
-    delete Config.DATABASE;
-    delete Config.ALIVE_DATA;
-    delete Config.GOODBYE_MSG;
-    delete Config.WELCOME_MSG;
+}, async (message, match) => {
+    const vars = { ...Config };
+    delete vars.DATABASE;
+    delete vars.ALIVE_DATA;
+    delete vars.GOODBYE_MSG;
+    delete vars.WELCOME_MSG;
     if (message.client.server !== "HEROKU") {
-        delete Config.HEROKU_API_KEY;
-        delete Config.HEROKU_APP_NAME;
-    };
+        delete vars.HEROKU_API_KEY;
+        delete vars.HEROKU_APP_NAME;
+    }
     if (message.client.server !== "KOYEB") {
-        delete Config.KOYEB_API;
-        delete Config.KOYEB_APP_NAME;
-    };
+        delete vars.KOYEB_API;
+        delete vars.KOYEB_APP_NAME;
+    }
     if (message.client.server !== "RENDER") {
-        delete Config.RENDER_API;
-        delete Config.RENDER_APP_NAME;
-    };
+        delete vars.RENDER_API;
+        delete vars.RENDER_APP_NAME;
+    }
     if (message.client.server !== "RAILWAY") {
-        delete Config.RAILWAY_API;
-    };
+        delete vars.RAILWAY_API;
+    }
+    const showAll = match && match.trim() === "all";
     let s = '\n*All Your Vars*\n\n';
-    for (const key in Config) {
-       if (process.env[key]){
-         s += `*${key}*: ${Config[key]}\n\n`;
-         }
-       };
+    for (const key in vars) {
+        if (showAll || process.env[key]) {
+            s += `*${key}*: ${vars[key]}\n\n`;
+        }
+    }
     await message.reply(s);
 });
 
