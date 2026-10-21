@@ -101,7 +101,7 @@ System({
           let matchUrl = (await extractUrlsFromText(match))[0];
           const yt = await YtInfo(matchUrl);
           let txt = `*_${yt.title}_*\n\n\n\`\`\`1.⬢\`\`\` *audio*\n\`\`\`2.⬢\`\`\` *video*\n\n_*Send a number as a reply to download*_`;
-          return await message.reply({ url : yt.thumbnail }, { caption: txt }, 'image';
+          return await message.reply({ url : yt.thumbnail }, { caption: txt }, 'image');
       } else {
           const yt = (await yts(match))[0];
           let txt = `*_${yt.title}_*\n\n\n\`\`\`1.⬢\`\`\` *audio*\n\`\`\`2.⬢\`\`\` *video*\n\n_*Send a number as a reply to download*_`;
