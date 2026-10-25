@@ -10,6 +10,7 @@ Jarvis - Loki-Xer
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 const { System, changeVar, setData, config: Config, platform: { heroku, koyeb, render, railway }, bot } = require("../lib/");
+const REPO_URL = "https://github.com/Loki-Xer/jarvis.git";
 const { version } = require('../package.json');
 const simpleGit = require("simple-git");
 const pm2 = require("pm2");
@@ -247,8 +248,28 @@ System({
     desc: "Checks for update.",
 }, async (message, match) => {
     const server = message.client.server;
-    await git.fetch();
-    var commits = await git.log([Config.BRANCH + "..origin/" + Config.BRANCH,]);
+    const branch = Config.BRANCH || "main";
+    const isRepo = await git.checkIsRepo();
+    if (!isRepo) {
+        await git.init();
+        await git.addRemote("origin", REPO_URL);
+    } else {
+        const remotes = await git.getRemotes(true);
+        const origin = remotes.find((r) => r.name === "origin");
+        if (!origin) {
+            await git.addRemote("origin", REPO_URL);
+        } else if (origin.refs.fetch !== REPO_URL) {
+            await git.remote(["set-url", "origin", REPO_URL]);
+        }
+    };
+    await git.fetch("origin", branch);
+    let commits;
+    try {
+        commits = await git.log([`${branch}..origin/${branch}`]);
+    } catch {
+        await git.raw(["checkout", "-B", branch, `origin/${branch}`]);
+        commits = { total: 0, all: [] };
+    };
     if (match == "now") {
         if (commits.total === 0) {
             return await message.reply(`_Jarvis is on the latest version: v${version}_`);
