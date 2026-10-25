@@ -10,21 +10,7 @@ Jarvis - Loki-Xer
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 const { System, isPrivate } = require("../lib/");
-const { getJson, getBuffer, sleep } = require('./client/');
-    
-System({
-    pattern: "help",
-    fromMe: isPrivate,
-    desc: "jarvis-md support",
-    type: "support"
-}, async (message) => {
-    const name = 'ɪʀᴏɴ ᴍᴀɴ 🎓', title = "ᴊᴀʀᴠɪꜱ ꜱᴜᴩᴩᴏʀᴛ 🪄", number = '4915252819677', body = "ɪʀᴏɴ ᴍᴀɴ";
-    const image = "https://graph.org/file/58ea74675af7836579a3a.jpg", sourceUrl = 'https://github.com/Loki-Xer/Jarvis';
-    const logo = await getBuffer(image);
-    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nORG: powered by Jarvis-md;\nTEL;type=CELL;type=VOICE;waid=${number}:${number}\nEND:VCARD`;
-    const adon = { title, body, thumbnail: logo, mediaType: 1, mediaUrl: sourceUrl, sourceUrl, showAdAttribution: true, renderLargerThumbnail: false };
-    await message.send({ displayName: name, contacts: [{ vcard }] }, { contextInfo: { externalAdReply: adon }, quoted: message }, "contacts");
-});
+const { getJson } = require('./client/');
 
 System({
     pattern: "allplugin",
@@ -32,14 +18,7 @@ System({
     desc: "To get all plugin of jarvis-md",
     type: "support"
 }, async (message) => {
-    const { result: allPluginsData } = await getJson(api + 'bot/plugin?query=allplugin');
-    const { result: externalPluginsData } = await getJson(api + 'bot/plugin?query=pluginlist');
-    const formatPluginData = (pluginData) => {
-        return Object.entries(pluginData).map(([key, value]) => `*${key}:* ${value.url}`).join('\n\n');
-    };
-    await message.send('*External plugins need to edit* \n\n' + formatPluginData(externalPluginsData), {});
-    await sleep(500);
-    await message.send('*All plugins no need to edit* \n\n' + formatPluginData(allPluginsData), {});
+    message.reply('*Find Your Favourite Plugins*\n\n*Browse plugins, copy your favourite, and install it. You can also add your own plugins!*\n\n*Explore and Sign Up:*\n\nhttps://jarvis-md.vercel.app/plugins');
 });
 
 
