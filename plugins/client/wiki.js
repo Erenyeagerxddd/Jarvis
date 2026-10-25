@@ -1,19 +1,26 @@
 const axios = require("axios");
+const { randomUserAgent } = require('./userAgents');
+
+const http = axios.create({
+  timeout: 8000,
+  headers: {
+    "User-Agent": randomUserAgent(),
+    Accept: "application/json",
+  },
+});
 
 async function Wiki(query) {
   const q = String(query || "").trim();
   if (!q) return { success: false, error: "Empty query" };
   try {
-    const search = await axios.get("https://en.wikipedia.org/w/api.php", {
+    const search = await http.get("https://en.wikipedia.org/w/api.php", {
       params: { action: "opensearch", search: q, limit: 1, namespace: 0, format: "json" },
-      timeout: 8000,
     });
     const title = search.data?.[1]?.[0];
     if (!title) return { success: false, error: "No results", query: q };
-    const { data: d } = await axios.get(
+    const { data: d } = await http.get(
       "https://en.wikipedia.org/api/rest_v1/page/summary/" +
-        encodeURIComponent(title.replace(/ /g, "_")),
-      { timeout: 8000 }
+        encodeURIComponent(title.replace(/ /g, "_"))
     );
     return {
       success: true,
