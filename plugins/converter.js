@@ -23,7 +23,8 @@ const {
     setData,
     getData,
     translate,
-    makeUrl
+    makeUrl,
+    upscaleImage
 } = require("../lib/");
 const { 
     trim,
@@ -219,4 +220,19 @@ System({
   };
   const result = await translate(text[0], language);
   return await message.reply(result || "_failed to translate_");
+});
+
+System({
+    pattern: "upscale", 
+    fromMe: isPrivate,
+    desc: "To upscale image", 
+    type: "converter",
+}, async (m, match) => {
+    if (!m.image && !m.reply_message.image) return m.reply("*Reply to an image*");
+    const msg = await m.reply("*Upscaled image it can take upto 3 minutes*");
+    let buff = await upscaleImage(await m.downloadMediaMessage(m.image ? m.msg : m.quoted ? m.reply_message.msg : null));
+    if(!buff) return m.reply("*Error occurred while upscaling the image*");
+    await msg.edit("*Almost done*");
+    await m.reply(buff, {}, "image");
+    msg.edit("*Upscaled image*");
 });
