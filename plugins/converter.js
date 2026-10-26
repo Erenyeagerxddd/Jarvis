@@ -234,5 +234,5 @@ System({
     if(!buff) return m.reply("*Error occurred while upscaling the image*");
     await msg.edit("*Almost done*");
     await m.reply(buff, {}, "image");
-    msg.edit("*Upscaled image*");
+    return await msg.edit("*Upscaled image*");
 });
