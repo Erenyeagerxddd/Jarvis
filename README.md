@@ -9,7 +9,7 @@
 <br><br>
 *Connect your account on our website to unlock the full power of Jarvis with total privacy.*
 
-<kbd> <br> <img src="https://api.iconify.design/bi/github.svg?color=white" height="16" align="absmiddle"> <samp><b>Login with github</b></samp> <br> </kbd> 
+[<kbd> <br> <img src="https://api.iconify.design/bi/github.svg?color=white" height="25" width="18" align="absmiddle"> <samp><b>Login with github</b></samp> <br> </kbd>][LOGIN]
 
 <br>
 
@@ -19,7 +19,7 @@
 
 <br>
 
-[<kbd> <br> <img src="https://api.iconify.design/bi/cloud-arrow-up-fill.svg?color=white" height="16" align="absmiddle"> <samp><b>Deployment menu</b></samp> <br> </kbd>](https://jarvis-md.vercel.app/deploy)
+[<kbd> <br> <img src="https://api.iconify.design/bi/cloud-arrow-up-fill.svg?color=white" height="25" width="18" align="absmiddle"> <samp><b>Deployment menu</b></samp> <br> </kbd>][DEPLOY]
 
 <br>
 
@@ -27,7 +27,7 @@
 <br><br>
 *Browse, install, or submit your own custom plugins. All extensions listed here are officially vetted and code-verified for reliability.*
 
-[<kbd> <br> <img src="https://api.iconify.design/bi/shop.svg?color=white" height="16" align="absmiddle"> <samp><b>Plugins Store</b></samp> <br> </kbd>](https://jarvis-md.vercel.app/plugins)
+[<kbd> <br> <img src="https://api.iconify.design/bi/shop.svg?color=white" height="25" width="18" align="absmiddle"> <samp><b>Plugins Store</b></samp> <br> </kbd>][PLUGINS]
 
 **Need help or facing an issue? Check out our official [Wiki page](https://jarvis-md.vercel.app/wiki) for solutions.**
 
@@ -62,3 +62,7 @@
 ***
 #### THANKS TO
 - [INRL ❤️](https://github.com/inrl-official) <br>
+
+[LOGIN]: https://jarvis-md.vercel.app/login
+[DEPLOY]: https://jarvis-md.vercel.app/deploy
+[PLUGINS]: https://jarvis-md.vercel.app/plugins
