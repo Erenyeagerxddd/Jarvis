@@ -1,83 +1,64 @@
-#### JARVIS MD WHATSAPP BOT
-jarvis md is Multi Device whatsapp bot
+# JARVIS BOT
+
+**A feature-rich WhatsApp bot designed to simplify your daily tasks with automation, a wide collection of plugins, media tools, chat management, and more. Customize your experience, explore useful commands, and make WhatsApp work the way you want.**
+
+
+### Let's Begin
+
+**1. Get your session!**
+<br><br>
+*Connect your account on our website to unlock the full power of Jarvis with total privacy.*
+
+<kbd> <br> <img src="https://api.iconify.design/bi/github.svg?color=white" height="16" align="absmiddle"> <samp><b>Login with github</b></samp> <br> </kbd> 
+
+<br>
+
+**2. Let's Deploy :)**
+<br><br>
+*Use our official one-click deployment template to set up and host your Jarvis instance effortlessly.*
+
+<br>
+
+[<kbd> <br> <img src="https://api.iconify.design/bi/cloud-arrow-up-fill.svg?color=white" height="16" align="absmiddle"> <samp><b>Deployment menu</b></samp> <br> </kbd>](https://jarvis-md.vercel.app/deploy)
+
+<br>
+
+**3. Find Plugins !**
+<br><br>
+*Browse, install, or submit your own custom plugins. All extensions listed here are officially vetted and code-verified for reliability.*
+
+[<kbd> <br> <img src="https://api.iconify.design/bi/shop.svg?color=white" height="16" align="absmiddle"> <samp><b>Plugins Store</b></samp> <br> </kbd>](https://jarvis-md.vercel.app/plugins)
+
+**Need help or facing an issue? Check out our official [Wiki page](https://jarvis-md.vercel.app/wiki) for solutions.**
+
 ***
 
-### SETUP JARVIS
+###### ⓘ Storage Configuration: Choose a database solution that matches your hosting environment. Cloud deployments should use a PostgreSQL connection string (DATABASE_URL), while self-hosted VPS instances can store data locally.
 
-1. Scan the QR code
-    <br>
-<a href='https://jarvis-md.vercel.app/' target="_blank"><img alt='SCAN QR' src='https://img.shields.io/badge/Scan_qr-100000?style=for-the-badge&logo=whatspp&logoColor=white&labelColor=black&color=black'/></a>
+***
+### Dependencies !!
 
-#### DEPLOY TO HEROKU 
-
-1. If You don't have a account in Heroku. Create a account in heroku.
-    <br>
-<a href='https://signup.heroku.com/' target="_blank"><img alt='Heroku' src='https://img.shields.io/badge/-Create-black?style=for-the-badge&logo=heroku&logoColor=white'/></a>
-
-3. Now Deploy
-    <br>
-<a href='https://jarvis-md.vercel.app/deploy#heroku' target="_blank"><img alt='Heroku' src='https://img.shields.io/badge/-Deploy-black?style=for-the-badge&logo=heroku&logoColor=white'/></a>
+* Node.js (version 18 or higher)
+* Git
+* FFmpeg
+* PM2 (for process management)
+* Database URL (postgreSQL - for cloud deployments)
 
 
-#### DEPLOY TO RAILWAY
+***
 
-1. If You don't have a account in railway. Create a account in railway.
-    <br>
-<a href='https://railway.app/login' target="_blank"><img alt='railway' src='https://img.shields.io/badge/-Create-black?style=for-the-badge&logo=railway&logoColor=white'/></a>
-
-2.Get [Railway api key](https://railway.app/account/tokens)
-
-3. Now Deploy
-    <br>
-<a href='https://jarvis-md.vercel.app/deploy#railway' target="_blank"><img alt='DEPLOY' src='https://img.shields.io/badge/-DEPLOY-black?style=for-the-badge&logo=railway&logoColor=white'/></a>
-
-#### DEPLOY TO KOYEB 
-
-1. If You don't have a account in koyeb. Create a account.
-    <br>
-<a href='https://app.koyeb.com/auth/signup' target="_blank"><img alt='koyeb' src='https://img.shields.io/badge/-Create-black?style=for-the-badge&logo=koyeb&logoColor=white'/></a>
-
-3. Get [DATABASE_URL](https://jarvis-md.vercel.app/wiki#database-url) and copy it
-
-4. Get [Koyeb api key](https://app.koyeb.com/settings/api)
-
-2. Now Deploy
-    <br>
-<a href='https://jarvis-md.vercel.app/deploy#koyeb' target="_blank"><img alt='DEPLOY' src='https://img.shields.io/badge/-DEPLOY-black?style=for-the-badge&logo=koyeb&logoColor=white'/></a>
-
-#### DEPLOY TO PANEL
-
-1. If You don't have a account in panel create it . 
-2. How to deploy in panel?
-    <br>
-<a href='https://gist.github.com/IRON-M4N/2ab6496e34ec714682c7b6fb6ee86ca1' target="_blank"><img alt='PANEL' src='https://img.shields.io/badge/PANEL-100000?style=for-the-badge&logo=pterodactyl&logoColor=white&labelColor=black&color=black&logoSize=auto'/></a>
-
-#### DEPLOY TO RENDER 
-
-1. If You don't have a account in render. Create a account.
-    <br>
-<a href='https://dashboard.render.com/register' target="_blank"><img alt='render' src='https://img.shields.io/badge/-Create-black?style=for-the-badge&logo=render&logoColor=white'/></a>
-
-3. Get [DATABASE_URL](https://jarvis-md.vercel.app/wiki#database-url) and copy it
-
-4. Get [Render api key](https://dashboard.render.com/u/settings#api-keys)
+> ⚠ **Disclaimer:** This bot relies on unofficial WhatsApp Web API methods and may lead to your account being temporarily or permanently banned, so use it at your own risk, and it is not affiliated with, authorized by, maintained by, sponsored by, or endorsed by WhatsApp or any of its subsidiaries ("WhatsApp" is a registered trademark of WhatsApp Inc. in the United States and other countries), as it is provided strictly for educational and research purposes. <br><br> ⚠ **Important:** A few files are obfuscated for security purposes, and editing them is not recommended.
 
 
-2. Now Deploy
-    <br>
-<a href='https://jarvis-md.vercel.app/deploy#render' target="_blank"><img alt='DEPLOY' src='https://img.shields.io/badge/-DEPLOY-black?style=for-the-badge&logo=render&logoColor=white'/></a>
-    
+**Powered by [Baileys](https://github.com/WhiskeySockets/Baileys)** 
+
+***
+
+### Community
+
+* [Whatsapp Group](https://chat.whatsapp.com/HCRUrl9kCvEL6v7OhmG5BR)
+* [Official Website](https://jarvis-md.vercel.app/)
+
+***
 #### THANKS TO
 - [INRL ❤️](https://github.com/inrl-official) <br>
-
-#### JARVIS SUPPORT 
-
-
-
-<a href="https://whatsapp.com/channel/0029Va9dOax4o7qDb6pVvp34"><img alt="WhatsApp" src="https://img.shields.io/badge/-Whatsapp%20Channel-white?style=for-the-badge&logo=whatsapp&logoColor=black"/></a>
-    <br>
-<br>
-<a href="https://chat.whatsapp.com/HCRUrl9kCvEL6v7OhmG5BR"><img alt="WhatsApp" src="https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white"/></a>
-    <br>
-<br>
-<a href='https://github.com/IRON-M4N/Jarvis-MD-Plugins' target="_blank"><img alt='jarvis-md' src='https://img.shields.io/badge/EXPLUGIN-100000?style=for-the-badge&logo=scan&logoColor=white&labelColor=black&color=black'/></a>
