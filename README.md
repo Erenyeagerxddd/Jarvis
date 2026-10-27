@@ -1,6 +1,6 @@
 # JARVIS BOT
 
-**A feature-rich WhatsApp bot designed to simplify your daily tasks with automation, a wide collection of plugins, media tools, chat management, and more. Customize your experience, explore useful commands, and make WhatsApp work the way you want.**
+*A feature-rich WhatsApp bot designed to simplify your daily tasks with automation, a wide collection of plugins, media tools, chat management, and more. Customize your experience, explore useful commands, and make WhatsApp work the way you want.*
 
 
 ### Let's Begin
