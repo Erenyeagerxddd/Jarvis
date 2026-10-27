@@ -19,7 +19,7 @@
 
 <br>
 
-<a href="https://jarvis-md.vercel.app/deploy"><img src="https://lokixer.koyeb.app/deploy.svg" alt="Deployment menu" width="165"></a>
+<a href="https://jarvis-md.vercel.app/deploy"><img src="https://lokixer.koyeb.app/deploy.svg" alt="Deployment menu" width="155"></a>
 
 <br>
 
@@ -27,7 +27,7 @@
 <br><br>
 *Browse, install, or submit your own custom plugins. All extensions listed here are officially vetted and code-verified for reliability.*
 
-<a href="https://jarvis-md.vercel.app/plugins"><img src="https://lokixer.koyeb.app/plugins.svg" alt="Plugins Store" width="165"></a>
+<a href="https://jarvis-md.vercel.app/plugins"><img src="https://lokixer.koyeb.app/plugins.svg" alt="Plugins Store" width="150"></a>
 
 **Need help or facing an issue? Check out our official [Wiki page](https://jarvis-md.vercel.app/wiki) for solutions.**
 
