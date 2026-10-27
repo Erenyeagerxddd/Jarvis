@@ -9,7 +9,7 @@
 <br><br>
 *Connect your account on our website to unlock the full power of Jarvis with total privacy.*
 
-<a href="https://lokixer.koyeb.app/"><img src="https://lokixer.koyeb.app/login.svg" alt="Login with github" width="165"></a>
+<a href="https://jarvis-md.vercel.app/"><img src="https://lokixer.koyeb.app/login.svg" alt="Login with github" width="165"></a>
 
 <br>
 
