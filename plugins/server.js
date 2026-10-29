@@ -9,7 +9,7 @@ Jarvis - Loki-Xer
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-const { System, changeVar, setData, config: Config, platform: { heroku, koyeb, render, railway }, bot } = require("../lib/");
+const { System, changeVar, setData, config: Config, platform: { heroku, koyeb, render, railway }, bot, isLid } = require("../lib/");
 const REPO_URL = "https://github.com/Loki-Xer/jarvis.git";
 const { version } = require('../package.json');
 const simpleGit = require("simple-git");
@@ -177,22 +177,38 @@ System({
     type: "server" 
 }, async (message, match) => { 
     let newSudo;
-    if (message.mention && message.mention.jid && message.mention.jid[0]) {
+    if (message.isPm) {
+      if (isLid(message.jid)) return await message.reply("*Sorry can't find the number please enter it !*");
+      newSudo = message.jid.split("@")[0];
+    } else if (message.mention && message.mention.jid && message.mention.jid[0]) {
+      if (isLid(message.mention.jid)) return await message.reply("*Sorry can't find the number please enter it !*");    
       newSudo = message.mention.jid[0].split("@")[0];
     } else if (message.reply_message && message.reply_message.sender) {
+      if (isLid(message.reply_message.sender)) return await message.reply("*Sorry can't find the number please enter it !*");
       newSudo = message.reply_message.sender.split("@")[0];
     } else {
       newSudo = null;
     }
     if (!newSudo && !match) return await message.reply("_Reply to someone/mention_\n*Example:* . setsudo @user");
     let setSudo = Config.SUDO;
+    let sudoNumbers = String(Config.SUDO || "").split(",").map(num => num.replace(/\D/g, "")).filter(Boolean);
     if (newSudo) {
-        setSudo = (setSudo + "," + newSudo).replace(/,,/g, ",");
-        setSudo = setSudo.startsWith(",") ? setSudo.replace(",", "") : setSudo;
+        newSudo = newSudo.replace(/\D/g, "");
+        if (newSudo && !sudoNumbers.includes(newSudo)) {
+            sudoNumbers.push(newSudo);
+        }
     }
-    await message.reply("*new sudo numbers are :* " + setSudo);
-    await message.reply("_It takes 30 seconds to take effect_");
-
+    if (match) {
+        const extraNumbers = String(match).split(",").map(num => num.replace(/\D/g, "")).filter(Boolean);
+        for (const num of extraNumbers) {
+            if (!sudoNumbers.includes(num)) {
+                sudoNumbers.push(num);
+            }
+        }
+    }
+    const setSudo = sudoNumbers.join(",");
+    await message.reply("*New sudo numbers are:*\n" + (setSudo || "None"));
+    await message.reply("_It takes 30 seconds to take effect._");
     if (message.client.server === "HEROKU") {
       const env = await heroku.setVar("SUDO", setSudo);
       if (!env) return message.reply(env);
