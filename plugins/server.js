@@ -16,6 +16,9 @@ const simpleGit = require("simple-git");
 const pm2 = require("pm2");
 const git = simpleGit();
 
+const SECRET_REGEX = /(KEY|TOKEN|SESSION|SECRET|PASSWORD|DATABASE|API)/i;
+const isSecret = (key) => SECRET_REGEX.test(key);
+
 System({
     pattern: "(shutdown|poweroff)",
     fromMe: true,
@@ -36,35 +39,36 @@ System({
   const [key, ...part] = match.split(":");
   const value = part.join(":").trim();
   if (!key || !value) return await m.send(`_*Example: .setvar SUDO:917025673121*_`);
+  const KEY = key.trim().toUpperCase();
   if (m.client.server === "HEROKU") {
-    await m.send(`_*Updated variable ${key.toUpperCase()}: ${value}*_`);
-    const env = await heroku.setVar(key.toUpperCase(), value);
-    if (!env) return m.reply(env);
+    await m.send(`_*Updated variable ${KEY}: ${value}*_`);
+    const env = await heroku.setVar(KEY, value);
+    if (!env) return await m.reply("*Error in changing variable*");
   } else if (m.client.server === "RENDER") {
-      await m.send(`*_Successfully Set_* *${key.toUpperCase()}:${value}*\n_ReDeploying..._`);
-      await render.setVar(key.toUpperCase(), value);
+    await m.send(`*_Successfully Set_* *${KEY}:${value}*\n_ReDeploying..._`);
+    await render.setVar(KEY, value);
   } else if (m.client.server === "KOYEB") {
-    const koyebEnv = await koyeb.setVar(key.toUpperCase(), value);
+    const koyebEnv = await koyeb.setVar(KEY, value);
     await m.reply(koyebEnv);
   } else if (m.client.server === "RAILWAY") {
-    await railway.setVar(key.toUpperCase(), value, m);
+    await railway.setVar(KEY, value, m);
   } else {
-    const env = await changeVar(key.toUpperCase(), value);
-    if (!env) return m.send("*Error in changing variable*");
-    await setData(key.toUpperCase(), value, !!value, "vars");
-    await m.reply(`_*Environment variable ${key.toUpperCase()} set to ${value}*_`);
+    const env = await changeVar(KEY, value);
+    if (!env) return await m.send("*Error in changing variable*");
+    await setData(KEY, value, !!value, "vars");
+    await m.reply(`_*Environment variable ${KEY} set to ${value}*_`);
     await bot.restart();
   }
 });
-
 
 System({
     pattern: "(platform|server)",
     fromMe: true,
     type: "server",
-    desc: "Show which platform you delpoyed",
-}, async (msg, match) => {
-    msg.reply("_*" + "You are delpoyed on " + server.charAt(0).toUpperCase() + server.slice(1).toLowerCase() + "*_");
+    desc: "Show which platform you deployed",
+}, async (msg) => {
+    const server = String(msg.client.server || "unknown");
+    await msg.reply("_*You are deployed on " + server.charAt(0).toUpperCase() + server.slice(1).toLowerCase() + "*_");
 });
 
 System({
@@ -76,22 +80,22 @@ System({
     if (!match) return await message.reply("_Example: delvar sudo_");
     const key = match.trim().toUpperCase();
     if (message.client.server === "HEROKU") {
-      await message.reply(`_*deleted var ${key.toUpperCase()}*_`);
-      const env = await heroku.setVar(key.toUpperCase(), null);
-      if (!env) return message.reply(env);
-    } else if(message.client.server === "RENDER") {
-        await message.send(`*_Successfully Deleted_* *${key}*\n_ReDeploying..._`);
-        await render.delVar(key);
+      await message.reply(`_*deleted var ${key}*_`);
+      const env = await heroku.setVar(key, null);
+      if (!env) return await message.reply("*Error in deleting variable*");
+    } else if (message.client.server === "RENDER") {
+      await message.send(`*_Successfully Deleted_* *${key}*\n_ReDeploying..._`);
+      await render.delVar(key);
     } else if (message.client.server === "KOYEB") {
-      const koyebEnv = await koyeb.setVar(key.toUpperCase(), null);
-      await message.reply(`_*deleted var ${key.toUpperCase()}*_`);
+      await koyeb.setVar(key, null);
+      await message.reply(`_*deleted var ${key}*_`);
     } else if (message.client.server === "RAILWAY") {
-      await railway.setVar(key.toUpperCase(), null, message);
+      await railway.setVar(key, null, message);
     } else {
-      const env = await changeVar(key.toUpperCase(), "");
-      if (!env) return message.reply("*Error in deleted variable*");  
-      await setData(key.toUpperCase(), null, false, "vars");
-      await message.reply(`_*deleted var ${key.toUpperCase()}*_`);
+      const env = await changeVar(key, "");
+      if (!env) return await message.reply("*Error in deleting variable*");
+      await setData(key, null, false, "vars");
+      await message.reply(`_*deleted var ${key}*_`);
       await bot.restart();
     }
 });
@@ -126,7 +130,8 @@ System({
     let s = '\n*All Your Vars*\n\n';
     for (const key in vars) {
         if (showAll || process.env[key]) {
-            s += `*${key}*: ${vars[key]}\n\n`;
+            const val = isSecret(key) ? "[hidden]" : vars[key];
+            s += `*${key}*: ${val}\n\n`;
         }
     }
     await message.reply(s);
@@ -138,25 +143,23 @@ System({
     type: "server",
     desc: "Show env",
 }, async (message, match) => {
-    if(!match) return message.reply("_*eg: getvar sudo*_");
+    if (!match || !match.trim()) return await message.reply("_*eg: getvar sudo*_");
     const requestedVar = match.trim().toUpperCase();
-    if (typeof requestedVar !== 'string' || !requestedVar.trim()) {
-          await message.reply("_*Invalid variable name provided.*_");
-    } else if (Object.prototype.hasOwnProperty.call(process.env, requestedVar) || Object.prototype.hasOwnProperty.call(Config, requestedVar)) {
-           const value = process.env[requestedVar] || Config[requestedVar];
-           await message.reply(`*${requestedVar}*: ${value}`);
+    if (Object.prototype.hasOwnProperty.call(process.env, requestedVar) || Object.prototype.hasOwnProperty.call(Config, requestedVar)) {
+        const value = isSecret(requestedVar) ? "[hidden]" : (process.env[requestedVar] || Config[requestedVar]);
+        await message.reply(`*${requestedVar}*: ${value}`);
     } else {
-           await message.reply(`_*Variable '${requestedVar}' not found.*_`);
+        await message.reply(`_*Variable '${requestedVar}' not found.*_`);
     }
 });
 
 System({
-    pattern: "(getsudo|getadmins)", 
-    fromMe: true, 
+    pattern: "(getsudo|getadmins)",
+    fromMe: true,
     type: "server",
-    desc: "shows sudo", 
- }, async (message, match) => {
-    await message.reply("_*SUDO NUMBER'S ARA :*_ "+"```"+Config.SUDO+"```")
+    desc: "shows sudo",
+}, async (message) => {
+    await message.reply("_*SUDO NUMBER'S ARE :*_ " + "```" + Config.SUDO + "```");
 });
 
 System({
@@ -165,23 +168,23 @@ System({
     type: "server",
     desc: "Show Quota info of heroku",
 }, async (message) => {
-    if(message.client.server !== "HEROKU") return await message.reply(`_this cmd for heroku_`);
-    if(!Config.HEROKU_API_KEY) return await message.send("*Can't find HEROKU_API_KEY*");
+    if (message.client.server !== "HEROKU") return await message.reply(`_this cmd for heroku_`);
+    if (!Config.HEROKU_API_KEY) return await message.send("*Can't find HEROKU_API_KEY*");
     await message.reply(await heroku.dyno());
 });
 
 System({
-    pattern: "setsudo", 
-    fromMe: true, 
-    desc: "set sudo", 
-    type: "server" 
-}, async (message, match) => { 
+    pattern: "setsudo",
+    fromMe: true,
+    desc: "set sudo",
+    type: "server"
+}, async (message, match) => {
     let newSudo;
     if (message.isPm) {
       if (isLid(message.jid)) return await message.reply("*Sorry can't find the number please enter it !*");
       newSudo = message.jid.split("@")[0];
     } else if (message.mention && message.mention.jid && message.mention.jid[0]) {
-      if (isLid(message.mention.jid)) return await message.reply("*Sorry can't find the number please enter it !*");    
+      if (isLid(message.mention.jid[0])) return await message.reply("*Sorry can't find the number please enter it !*");
       newSudo = message.mention.jid[0].split("@")[0];
     } else if (message.reply_message && message.reply_message.sender) {
       if (isLid(message.reply_message.sender)) return await message.reply("*Sorry can't find the number please enter it !*");
@@ -190,8 +193,7 @@ System({
       newSudo = null;
     }
     if (!newSudo && !match) return await message.reply("_Reply to someone/mention_\n*Example:* . setsudo @user");
-    let setSudo = Config.SUDO;
-    let sudoNumbers = String(Config.SUDO || "").split(",").map(num => num.replace(/\D/g, "")).filter(Boolean);
+    const sudoNumbers = String(Config.SUDO || "").split(",").map(num => num.replace(/\D/g, "")).filter(Boolean);
     if (newSudo) {
         newSudo = newSudo.replace(/\D/g, "");
         if (newSudo && !sudoNumbers.includes(newSudo)) {
@@ -211,16 +213,16 @@ System({
     await message.reply("_It takes 30 seconds to take effect._");
     if (message.client.server === "HEROKU") {
       const env = await heroku.setVar("SUDO", setSudo);
-      if (!env) return message.reply(env);
+      if (!env) return await message.reply("*Error set sudo*");
     } else if (message.client.server === "KOYEB") {
-      const koyebEnv = await koyeb.setVar("SUDO", setSudo);
+      await koyeb.setVar("SUDO", setSudo);
     } else if (message.client.server === "RENDER") {
-        await render.setVar("SUDO", setSudo);
+      await render.setVar("SUDO", setSudo);
     } else if (message.client.server === "RAILWAY") {
       await railway.setVar("SUDO", setSudo, message);
     } else {
       const env = await changeVar("SUDO", setSudo);
-      if (!env) return message.send("*Error set sudo*");  
+      if (!env) return await message.send("*Error set sudo*");
       await setData("SUDO", setSudo, !!setSudo, "vars");
       await bot.restart();
     }
@@ -229,32 +231,32 @@ System({
 System({
   pattern: "delsudo",
   fromMe: true,
-  desc: "delete sudo sudo",
+  desc: "delete sudo",
   type: "server",
 }, async (m, text) => {
-  let sudoNumber = m.quoted? m.reply_message.sender : text;
-  sudoNumber = sudoNumber.split("@")[0];
+  let sudoNumber = m.quoted ? m.reply_message?.sender : text;
   if (!sudoNumber) return await m.send("*Need reply/mention/number*");
-  let sudoList = Config.SUDO.split(",");
-  sudoList = sudoList.filter((number) => number!== sudoNumber);
-  let newSudoList = sudoList.join(",");
+  sudoNumber = String(sudoNumber).split("@")[0].replace(/\D/g, "");
+  if (!sudoNumber) return await m.send("*Need reply/mention/number*");
+  const sudoList = String(Config.SUDO || "").split(",").map(n => n.trim()).filter(Boolean);
+  const newSudoList = sudoList.filter((number) => number !== sudoNumber).join(",");
   await m.send(`NEW SUDO NUMBERS ARE: \n\`\`\`${newSudoList}\`\`\``, { quoted: m.data });
   await m.send("_IT TAKES 30 SECONDS TO MAKE EFFECT_", { quoted: m });
-   if (m.client.server === "HEROKU") {
-      const env = await heroku.setVar("SUDO", newSudoList);
-      if (!env) return m.reply(env);
-    } else if (m.client.server === "KOYEB") {
-      const koyebEnv = await koyeb.setVar("SUDO", newSudoList);
-    } else if (m.client.server === "RENDER") {
-       await render.setVar("SUDO", newSudoList);
-    } else if (m.client.server === "RAILWAY") {
-      await railway.setVar("SUDO", newSudoList, m);
-    } else {
-      const env = await changeVar("SUDO", newSudoList);
-      if (!env) return m.send("*Error set sudo*");  
-      await setData("SUDO", newSudoList, !!newSudoList, "vars");
-      await bot.restart();
-    }
+  if (m.client.server === "HEROKU") {
+    const env = await heroku.setVar("SUDO", newSudoList);
+    if (!env) return await m.reply("*Error set sudo*");
+  } else if (m.client.server === "KOYEB") {
+    await koyeb.setVar("SUDO", newSudoList);
+  } else if (m.client.server === "RENDER") {
+    await render.setVar("SUDO", newSudoList);
+  } else if (m.client.server === "RAILWAY") {
+    await railway.setVar("SUDO", newSudoList, m);
+  } else {
+    const env = await changeVar("SUDO", newSudoList);
+    if (!env) return await m.send("*Error set sudo*");
+    await setData("SUDO", newSudoList, !!newSudoList, "vars");
+    await bot.restart();
+  }
 });
 
 System({
@@ -277,7 +279,7 @@ System({
         } else if (origin.refs.fetch !== REPO_URL) {
             await git.remote(["set-url", "origin", REPO_URL]);
         }
-    };
+    }
     await git.fetch("origin", branch);
     let commits;
     try {
@@ -285,7 +287,7 @@ System({
     } catch {
         await git.raw(["checkout", "-B", branch, `origin/${branch}`]);
         commits = { total: 0, all: [] };
-    };
+    }
     if (match == "now") {
         if (commits.total === 0) {
             return await message.reply(`_Jarvis is on the latest version: v${version}_`);
@@ -293,9 +295,9 @@ System({
             if (server === "HEROKU") {
                 await heroku.update(message);
             } else if (server === "KOYEB") {
-                await message.reply("_*Building preparing 𐍮*_")
+                await message.reply("_*Building preparing 𐍮*_");
                 let check = await koyeb.getStatus();
-                if (check) return message.reply('_Please wait..._\n_Currently 2 instances are running in Koyeb, wait to stop one of them._');
+                if (check) return await message.reply('_Please wait..._\n_Currently 2 instances are running in Koyeb, wait to stop one of them._');
                 let data = await koyeb.update();
                 return await message.reply(data);
             } else {
@@ -306,8 +308,8 @@ System({
     } else if (commits.total === 0) {
         return await message.send(`_Jarvis is on the latest version: v${version}_`);
     } else {
-        var availupdate = "*Updates available for Jarvis-md* \n\n";
-        commits["all"].map((commit, num) => {
+        let availupdate = "*Updates available for Jarvis-md* \n\n";
+        commits["all"].forEach((commit, num) => {
             availupdate += num + 1 + " ●  " + commit.message + "\n";
         });
         const updateCommand = message.prefix ? `${message.prefix} update now` : "update now";
@@ -323,14 +325,14 @@ System({
 }, async (message) => {
   await message.send("_*Restarting*_");
   if (message.client.server === "HEROKU") {
-      await heroku.restart(message)
+    await heroku.restart(message);
   } else if (message.client.server === "RENDER") {
-      await render.restart();
+    await render.restart();
   } else if (message.client.server === "RAILWAY") {
-      await railway.restart();
+    await railway.restart();
   } else {
-      await bot.restart();
-  };
+    await bot.restart();
+  }
 });
 
 System({
@@ -340,10 +342,12 @@ System({
   desc: "change work type",
 }, async (message, value) => {
   if (!value) {
-    return message.isGroup ? await message.send("Choose mode", { values: [ { displayText: "private", id: "mode private" }, { displayText: "public", id: "mode public" }, ], onlyOnce: true, withPrefix: true, participates: [message.sender], }, "poll") : message.reply("_*mode private/public*_");
+    return message.isGroup
+      ? await message.send("Choose mode", { values: [{ displayText: "private", id: "mode private" }, { displayText: "public", id: "mode public" }], onlyOnce: true, withPrefix: true, participates: [message.sender] }, "poll")
+      : await message.reply("_*mode private/public*_");
   }
-  const workType = value.toLowerCase();
-  if (workType!== "public" && workType!== "private") return;
+  const workType = value.trim().toLowerCase();
+  if (workType !== "public" && workType !== "private") return await message.reply("_*mode private/public*_");
   await message.send(`_*Work type changed to ${workType}*_`);
   let env;
   switch (message.client.server) {
@@ -357,13 +361,13 @@ System({
       env = await render.setVar("WORK_TYPE", workType);
       break;
     case "RAILWAY":
-     env = await railway.setVar("WORK_TYPE", workType, message);
-     break;
+      env = await railway.setVar("WORK_TYPE", workType, message);
+      break;
     default:
       env = await changeVar("WORK_TYPE", workType);
       if (!env) return await message.send("*Error in changing variable*");
-      await setData("WORK_TYPE", workType,!!workType, "vars");
+      await setData("WORK_TYPE", workType, !!workType, "vars");
       await bot.restart();
   }
-  if (!env) return await message.reply(env);
+  if (!env) return await message.reply("*Error in changing variable*");
 });
