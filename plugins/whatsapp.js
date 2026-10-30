@@ -306,7 +306,8 @@ System({
     type: 'whatsapp',
     desc: 'pin a message in chat'
 }, async (message, match) => {
-    if (!message.quoted || !match) return await message.reply(`_Reply to a message to pin it_\n\n*Example*: _msgpin 24 =for pin msg for 24 hour_\n _msgpin 7 = for pin msg for 7days_\n _msgpin 30 = for pin msg for 30 days_`);
+    if (!message.quoted || !match) return await message.reply(`_Reply to a message to pin it_\n\n*Example*: _msgpin 0 = for unpin_\n_msgpin 24 =for pin msg for 24 hour_\n _msgpin 7 = for pin msg for 7days_\n _msgpin 30 = for pin msg for 30 days_`);
+	if(match === '0') return await message.reply(message.reply_message.data.key, { type: 2 }, "pin");
     var array = { '24': 86400, '7': 604800, '30': 2592000 };
     var time = array[match];
     if (!time) return await message.reply(`_Reply to a message to pin it_\n\n*Example*: _msgpin 24 =for pin msg for 24 hour_\n _msgpin 7 = for pin msg for 7days_\n _msgpin 30 = for pin msg for 30 days_`);
